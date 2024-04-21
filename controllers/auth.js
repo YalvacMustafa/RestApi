@@ -2,10 +2,7 @@ const User = require("../models/user");
 const CustomError = require("../helpers/error/CustomError");
 const asyncErrorWrapper = require("express-async-handler");
 const { sendJwtToClient } = require("../helpers/authorization/TokenHelpers");
-const {
-  validateUserInput,
-  comparePassword,
-} = require("../helpers/input/inputHelpers");
+const { validateUserInput, comparePassword} = require("../helpers/input/inputHelpers");
 const register = asyncErrorWrapper(async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
@@ -53,4 +50,14 @@ const getUser = (req, res, next) => {
     },
   });
 };
-module.exports = { register, getUser, login, logout };
+const imageUpload = asyncErrorWrapper(async (req, res, next) => {
+
+  res.status(200)
+  .json({
+
+    success : true,
+    message : "Image upload successfull"
+  });
+
+});
+module.exports = { register, getUser, login, logout, imageUpload };
