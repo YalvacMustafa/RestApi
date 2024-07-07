@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const UserSchema = new Schema({
@@ -70,8 +71,17 @@ const UserSchema = new Schema({
 
         type : Boolean,
         default : false
+    },
+
+    resetPasswordToken : {
+
+        type: String
+    },
+
+    resetPasswordExpire : {
+
+        type: Date
     }
-    
 })
 
 // UserSchema Methods 
@@ -91,6 +101,21 @@ UserSchema.methods.generateJwtFromUser = function() {
      return token;
 };
 
+UserSchema.methods.getResetPasswordTokenFromUser = function() {
+
+    const randomHexString = crypto.randomBytes(15).toString("hex");
+    const {RESET_PASSWORD_EXPIRE} = process.env; 
+
+    const resetPasswordToken = crypto
+    .createHash("SHA256")
+    .update(randomHexString)
+    .digest("hex");
+
+    this.resetPasswordToken = resetPasswordToken;
+    this.resetPasswordExpire = Date.now() + parseInt(RESET_PASSWORD_EXPIRE);
+
+    return resetPasswordToken;
+};
 // Pre Hooks 
 UserSchema.pre("save", function(next){
     // Parola değişmemişse 
