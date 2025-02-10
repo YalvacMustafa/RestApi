@@ -21,11 +21,8 @@ const PORT =  process.env.PORT;
 app.use("/api/", routers);
 
 
-// Error Handler
-
 app.use(CustomErrorHandler);
 
-// Static Files
 
 app.use(express.static(path.join(__dirname, "public")));
 app.listen(PORT, () => {
