@@ -121,4 +121,38 @@ const forgotPassword = asyncErrorWrapper(async (req, res, next) => {
       return next(new CustomError("Email could not be sent", 500));
     }
 });
-module.exports = { register, getUser, login, logout, imageUpload, forgotPassword };
+const getProfile = async (req, res, next) => {
+  try {
+    const { id } = req.user.id;
+    const user = User.findById(id)
+      .select('-password -role')
+
+    if (!user){
+      return next(new CustomError('User not found', 404))
+    }
+    return res.status(200).json({
+      success: true,
+      data: user
+    })
+  } catch(error){
+    return next(new CustomError('Internal Server Error', 500))
+  }
+}
+
+const getAllProfile = async (req, res, next) => {
+  try {
+    const user = await User.find()
+      .select('-password -role -createdAt')
+    
+    if (!user){
+      return next(new CustomError('User not found', 404))
+    }
+    return res.status(200).json({
+      success: true,
+      data: user
+    })
+  } catch(error){
+    return next(new CustomError('Internal Server Error', 500))
+  }
+}
+module.exports = { register, getUser, login, logout, imageUpload, forgotPassword, getProfile, getAllProfile };
