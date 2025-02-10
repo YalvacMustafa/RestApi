@@ -4,26 +4,19 @@ const routers = require("./routers");
 const connectDatabase = require("./helpers/database/connectDatabase");
 const CustomErrorHandler = require("./middlewares/errors/CustomErrorHandler");
 const path = require("path");
-// Environment Variables
+
 dotenv.config({ 
     
     path: "./config/env/config.env" });
-
-
-// MongDB Connection
 
 connectDatabase();
 
 
 const app = express();
 
-// Express Body MiddleWare 
-
 app.use(express.json());
 
 const PORT =  process.env.PORT;
-
-// Routers Middleware
 
 app.use("/api/", routers);
 
