@@ -1,6 +1,6 @@
 const express = require("express");
-const {register, getUser, login, logout, imageUpload, forgotPassword, resetPassword, getProfile, getAllProfile} = require("../controllers/auth");
-const {getAccessToRoute, getAdminAccess} = require("../middlewares/authorization/auth");
+const {register, getUser, login, logout, imageUpload, forgotPassword, resetPassword, getProfile, getAllProfile, updateProfile} = require("../controllers/auth");
+const {getAccessToRoute} = require("../middlewares/authorization/auth");
 const profileImageUpload = require("../middlewares/libraries/profileImageUpload");
 const checkUserExist = require('../middlewares/database/databaseErrorHelpers');
 const router = express.Router();
@@ -14,4 +14,5 @@ router.post("/forgotpassword", forgotPassword);
 router.put('/resetpassword', resetPassword)
 router.get('/Profile', getAccessToRoute, checkUserExist, getProfile);
 router.get('/allProfile', getAccessToRoute, getAllProfile);
+router.put('/updateProfile', getAccessToRoute, checkUserExist, updateProfile);
 module.exports = router;

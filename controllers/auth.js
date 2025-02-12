@@ -165,7 +165,7 @@ const getAllProfile = async (req, res, next) => {
   try {
     const user = await User.find()
       .select('-password -role -createdAt')
-      
+
     return res.status(200).json({
       success: true,
       data: user
@@ -174,4 +174,21 @@ const getAllProfile = async (req, res, next) => {
     return next(new CustomError('Internal Server Error', 500))
   }
 }
-module.exports = { register, getUser, login, logout, imageUpload, forgotPassword, resetPassword, getProfile, getAllProfile };
+
+const updateProfile = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const editInformation = req.body;
+    const user = await User.findByIdAndUpdate(id, editInformation, {
+      new: true,
+      runValidators: true
+    });
+    return res.status(200).json({
+      success: true,
+      data: user
+    })
+  } catch(error){
+    return next(new CustomError('Internal Server Error', 500))
+  }
+}
+module.exports = { register, getUser, login, logout, imageUpload, forgotPassword, resetPassword, getProfile, getAllProfile, updateProfile };
