@@ -2,6 +2,7 @@ const CustomError = require("../../helpers/error/CustomError");
 const jwt = require("jsonwebtoken");
 const { isTokenInCluded, getAccessTokenFromHeader } = require("../../helpers/authorization/TokenHelpers");
 const User = require('../../models/user');
+const Question = require('../../models/question');
 const getAccessToRoute = (req, res, next) => {
     const {JWT_SECRET_KEY} = process.env;
     
@@ -42,6 +43,19 @@ const getAdminAccess = async (req, res, next) => {
         return next(new CustomError('Internal Server Error', 500))
     }
 }
+
+const getQuestionOwnerAccess = async (req, res, next) => {
+    const userId = req.user;
+    const questionId = req.params.id;
+
+    const question = await Question.findById(questionId)
+
+    if (question.user != userId){
+        return next(new CustomError('Only owner can handle this operation', 403))
+    }
+    next();
+    
+}
 module.exports = {
-    getAccessToRoute, getAdminAccess
+    getAccessToRoute, getAdminAccess, getQuestionOwnerAccess
 };
