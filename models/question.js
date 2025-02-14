@@ -7,7 +7,8 @@ const QuestionSchema = new Schema({
     content: { type: String, required: true, minlength: 20},
     slug: { type: String },
     createdAt: { type: Date, default: Date.now },
-    user: { type: mongoose.Schema.ObjectId, required: true, ref: 'user' }
+    user: { type: mongoose.Schema.ObjectId, required: true, ref: 'user' },
+    likes: [{ type: mongoose.Schema.ObjectId, ref: 'user' }]
 })
 QuestionSchema.pre('save', function(next){
     if (!this.isModified('title')){

@@ -45,4 +45,78 @@ const getOneQuestions = async (req, res, next) => {
         return next(new CustomError('Internal Server Error', 500))
     }
 }
-module.exports = { askNewQuestion, getAllQuestions, getOneQuestions }
+
+const updateQuestion = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const editInformation = req.body;
+
+        const question = await Question.findByIdAndUpdate(id, editInformation, {
+            new: true,
+            runValidators: true
+        })
+        return res.status(200).json({
+            success: true,
+            message: 'Edited successfully',
+            data: question
+        })
+    } catch(error){
+        return next(new CustomError('Internal Server Error', 500))
+    }
+}
+
+const deleteQuestion = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await Question.findByIdAndDelete(id);
+
+        res.status(200).json({
+            success: true,
+            message: 'The deletion was completed successfully.'
+        })
+    } catch(error){
+        return next(new CustomError('Internal Server Error', 500))
+    }
+}
+
+const likeQuestion = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const question = await Question.findById(id);
+
+        if (question.likes.includes(req.user.id)){
+            return next(new CustomError('You already liked this question', 400))
+        }
+        question.likes.push(req.user.id);
+        await question.save();
+        return res.status(200).json({
+            success: true,
+            data: question
+        })
+    } catch(error){
+        return next(new CustomError('Internal Server Error', 500))
+    }
+
+}
+
+const undolikeQuestion = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const question = await Question.findById(id);
+
+        if (!question.likes.includes(req.user.id)){
+            return next(new CustomError('You can not undo like operation for this question', 400))
+        }
+        const index = question.likes.indexOf(req.user.id);
+        question.likes.splice(index, 1);
+
+        await question.save();
+        return res.status(200).json({
+            success: true,
+            data: question
+        })
+    } catch(error){
+        return next(new CustomError('Internal Server Error', 500))
+    }
+}
+module.exports = { askNewQuestion, getAllQuestions, getOneQuestions, updateQuestion, deleteQuestion, likeQuestion, undolikeQuestion }

@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-
+const Question = require('./question');
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const UserSchema = new Schema({
 
@@ -131,5 +131,10 @@ UserSchema.pre("save", function(next){
             next();
         });
     });
+})
+UserSchema.post('remove', async function(){
+    await Question.deleteMany({
+        user: this._id
+    })
 })
 module.exports = mongoose.model("User", UserSchema);
