@@ -1,5 +1,6 @@
 const User = require('../../models/user');
 const Question = require('../../models/question');
+const Answer = require('../../models/answer')
 const CustomError = require('../../helpers/error/CustomError');
 
 const checkUserExist = async (req, res, next) => {
@@ -21,4 +22,14 @@ const checkQuestionExist = async (req, res, next) => {
     }
     next();
 }
-module.exports = checkUserExist, checkQuestionExist;
+
+const checkAnswerExist = async (req, res, next) => {
+    const { id } = req.params;
+    const answer = await Answer.findById(id);
+
+    if (!answer){
+        return next(new CustomError('There is no such answer with that id', 404))
+    }
+    next();
+}
+module.exports = checkUserExist, checkQuestionExist, checkAnswerExist;

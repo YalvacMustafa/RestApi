@@ -2,7 +2,6 @@ const express = require("express");
 const question = require("./questions");
 const auth = require("./auth");
 const admin = require('./admin')
-
 const router = express.Router();
 
 router.use("/questions", question);
