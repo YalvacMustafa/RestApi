@@ -22,11 +22,7 @@ const askNewQuestion = async (req, res, next) => {
 
 const getAllQuestions = async (req, res, next) => {
     try {
-        const questions = await Question.find();
-        return res.status(200).json({
-            success: true,
-            data: questions
-        })
+        return res.status(200).json(res.queryResult)
     } catch(error){
         return next(new CustomError('Internal Server Error'))
     }
